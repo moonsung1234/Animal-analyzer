@@ -91,6 +91,8 @@ class ImageDownloader :
                     except :
                         pass
 
+"""
 path = "C:/Users/muns3/OneDrive/Desktop/python-project/learning-program/animal_analyzer/data_related"
 Idr = ImageDownloader(["dog", "cat"], 500, path)
 Idr.saveImages()
+"""
