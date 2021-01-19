@@ -67,7 +67,7 @@ class ImageCnnModel :
         self.predict_value = tf.equal(tf.argmax(self.y, 1), tf.argmax(self.t, 1))
         self.accuracy = tf.reduce_mean(tf.cast(self.predict_value, dtype=tf.float32))
 
-    def predict(self, x_all, t_all) :
+    def learn(self, x_all, t_all) :
         self.__setVariables()
         self.__setOptimizer()
         self.__setAccuracy()
@@ -76,28 +76,34 @@ class ImageCnnModel :
         x, t = self.x, self.t
 
         #run session
-        with tf.Session() as sess :
-            sess.run(tf.global_variables_initializer())
-            start_time = datetime.datetime.now()
+        self.sess = tf.Session()
+        self.sess.run(tf.global_variables_initializer())
+        start_time = datetime.datetime.now()
 
-            train_x = x_train
-            train_t = t_train
+        train_x = x_train
+        train_t = t_train
 
-            test_x = x_test
-            test_t = t_test
+        test_x = x_test
+        test_t = t_test
 
-            for i in range(self.loop_count) :
-                for ii in range(int(len(train_x) / self.learning_number)) :                   
-                    size = self.learning_number / len(train_x)
-                    batch_x, _, batch_t, _ = train_test_split(train_x, train_t, train_size=size, random_state=1234)
+        for i in range(self.loop_count) :
+            for ii in range(int(len(train_x) / self.learning_number)) :                   
+                size = self.learning_number / len(train_x)
+                batch_x, _, batch_t, _ = train_test_split(train_x, train_t, train_size=size, random_state=1234)
 
-                    loss_value, _ = sess.run([self.loss, self.train], feed_dict={x : batch_x, t : batch_t})
-                    
-                    if ii % self.learning_number == 0 :
-                        print("step : ", i, ", loss : ", loss_value)
+                loss_value, _ = self.sess.run([self.loss, self.train], feed_dict={x : batch_x, t : batch_t})
+                
+                if ii % self.learning_number == 0 :
+                    print("step : ", i, ", loss : ", loss_value)
 
-            end_time = datetime.datetime.now()
-            accuracy_value = sess.run(self.accuracy, feed_dict={x : test_x, t : test_t})
+        end_time = datetime.datetime.now()
+        accuracy_value = self.sess.run(self.accuracy, feed_dict={x : test_x, t : test_t})
 
-            print("time : ", end_time - start_time)
-            print("accuracy : ", accuracy_value)
+        print("time : ", end_time - start_time)
+        print("accuracy : ", accuracy_value)
+
+    def predict(self, x_data) :
+        x, t = self.x, self.t
+        predict_value = self.sess.run(self.y, feed_dict={x : x_data})
+        
+        return predict_value
