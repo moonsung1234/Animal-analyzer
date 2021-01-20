@@ -5,16 +5,16 @@ from imagecnn import ImageCnnModel
 import os
 
 class AnimalAnalyzer :
-    def __init__(self, animal_feature, save_path) :
+    def __init__(self, animal_feature, save_path, loop_count=10) :
         self.animal_feature = animal_feature
         self.save_path = save_path
         
-        self.Idr = ImageDownloader(self.animal_feature, self.save_path)
+        self.Idr = ImageDownloader(self.animal_feature, self.save_path, scroll_full_count=500, scroll_count=1000)
         self.Ihr = ImageHandler()
-        
+
         self.learning_rate = 0.001
-        self.loop_count = 100
-        self.learning_number = 50
+        self.loop_count = loop_count
+        self.learning_number = 100
         self.inputs = self.Ihr.image_width**2
         self.outputs = len(self.animal_feature)
 
@@ -29,7 +29,7 @@ class AnimalAnalyzer :
     def getFeatureImage(self) :
         self.Idr.saveImages()
 
-    def learn(self) :
+    def learn(self, loop_count=10) :
         x, t = [], []
 
         for f in self.animal_feature :

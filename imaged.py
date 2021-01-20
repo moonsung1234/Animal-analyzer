@@ -8,8 +8,9 @@ import random
 import datetime
 
 class ImageDownloader :
-    def __init__(self, animal_name, path, scroll_count=500, url="https://unsplash.com/s/photos/") :
+    def __init__(self, animal_name, path, scroll_full_count=50, scroll_count=500, url="https://unsplash.com/s/photos/") :
         self.animal_name = animal_name
+        self.scroll_full_count = scroll_full_count
         self.scroll_count = scroll_count
         self.path = path
         self.url = url
@@ -37,10 +38,10 @@ class ImageDownloader :
 
         scroll_value = self.scroll_count
 
-        for i in range(50) :
+        for i in range(self.scroll_full_count) :
             driver.execute_script("window.scrollTo(0, " + str(scroll_value) + ")")
             scroll_value += self.scroll_count
-            time.sleep(1)
+            time.sleep(0.1)
 
         soup = Bsoup(driver.page_source, "html.parser")
         images = soup.find_all("img", attrs={"class" : "_2UpQX"})
